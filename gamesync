@@ -28,6 +28,8 @@ def wrap_process():
     command_str = ' '.join(cmd_vars)
     env_dict = {var.split("=")[0]: var.split("=")[1] for var in env_vars}
 
+    logging.info(f'executing: {command_str}')
+
     subprocess.run(cmd_vars, shell=True, env=env_dict)
 
     logging.info(f'completed executing {command_str}')
