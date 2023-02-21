@@ -3,21 +3,15 @@ import sys
 import os
 import logging
 import subprocess
+from contextlib import redirect_stdout
 
 
 def is_env_var(arg):
     return "=" in arg
 
 
-if __name__ == '__main__':
-    logging.basicConfig(
-        format='%(asctime)s | %(levelname)s | %(message)s',
-        level=logging.NOTSET,
-        datefmt='%Y-%m-%d %H:%M:%S')
-
-    DEBUG = os.getenv('GAMESYNC_DEBUG')
+def wrap_process():
     input_command = sys.argv[1:]
-    env_vars = []
     split_index = None
 
     for i, item in enumerate(input_command):
@@ -31,10 +25,24 @@ if __name__ == '__main__':
         logging.error('command invalid, it is only made up of environment variables!')
         exit(1)
 
-    command = list(filter(lambda x: not is_env_var(x), sys.argv[1:]))
-    command_str = ' '.join(command)
+    command_str = ' '.join(cmd_vars)
     env_dict = {var.split("=")[0]: var.split("=")[1] for var in env_vars}
 
-    subprocess.run(command, shell=True, env=env_dict)
+    subprocess.run(cmd_vars, shell=True, env=env_dict)
 
     logging.info(f'completed executing {command_str}')
+
+
+if __name__ == '__main__':
+    DEBUG = os.getenv('GAMESYNC_DEBUG')
+    log_file = None
+    if DEBUG == 'true':
+        log_file = '~/.local/share/gamesync/log.log'
+
+    logging.basicConfig(
+        filename=log_file,
+        format='%(asctime)s | %(levelname)s | %(message)s',
+        level=logging.NOTSET,
+        datefmt='%Y-%m-%d %H:%M:%S')
+    wrap_process()
+
