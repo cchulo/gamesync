@@ -2,10 +2,8 @@
 import sys
 import os
 import logging
-import subprocess
 
 GAMESYNC_DEBUG = 'GAMESYNC_DEBUG'
-PWD = 'PWD'
 
 
 def is_env_var(arg):
