@@ -4,8 +4,8 @@ import os
 import logging
 import subprocess
 
-LD_LIBRARY_PATH = 'LD_LIBRARY_PATH'
 GAMESYNC_DEBUG = 'GAMESYNC_DEBUG'
+PWD = 'PWD'
 
 
 def is_env_var(arg):
@@ -16,43 +16,6 @@ def wrap_process():
     input_command = sys.argv[1:]
     original_command = ' '.join(input_command)
     logging.debug(f'The original command: {original_command}')
-    split_index = None
-
-    for i, item in enumerate(input_command):
-        if not is_env_var(item):
-            split_index = i
-            break
-    if split_index is not None:
-        cmd_vars = input_command[split_index:]
-    else:
-        logging.error('command invalid, it is only made up of environment variables!')
-        exit(1)
-
-    command_str = ' '.join(cmd_vars)
-
-    logging.info(f'executing: {command_str}')
-    env_dict = os.environ.copy()
-
-    proc = subprocess.Popen(
-        command_str,
-        shell=True,
-        env=env_dict,
-        start_new_session=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
-    )
-
-    proc.wait()
-
-    stdout = proc.stdout.read().decode()
-    stderr = proc.stderr.read().decode()
-    print(stdout)
-    logging.info(stdout)
-
-    if proc.returncode != 0:
-        logging.error(stderr)
-
-    logging.info(f'completed executing {command_str}')
 
 
 if __name__ == '__main__':
