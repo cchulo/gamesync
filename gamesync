@@ -1,5 +1,40 @@
 #!/usr/bin/env python3
 import sys
+import os
+import logging
+import subprocess
+
+
+def is_env_var(arg):
+    return "=" in arg
+
 
 if __name__ == '__main__':
-    print(sys.argv)
+    logging.basicConfig(
+        format='%(asctime)s | %(levelname)s | %(message)s',
+        level=logging.NOTSET,
+        datefmt='%Y-%m-%d %H:%M:%S')
+
+    DEBUG = os.getenv('GAMESYNC_DEBUG')
+    input_command = sys.argv[1:]
+    env_vars = []
+    split_index = None
+
+    for i, item in enumerate(input_command):
+        if not is_env_var(item):
+            split_index = i
+            break
+    if split_index is not None:
+        env_vars = input_command[:split_index]
+        cmd_vars = input_command[split_index:]
+    else:
+        logging.error('command invalid, it is only made up of environment variables!')
+        exit(1)
+
+    command = list(filter(lambda x: not is_env_var(x), sys.argv[1:]))
+    command_str = ' '.join(command)
+    env_dict = {var.split("=")[0]: var.split("=")[1] for var in env_vars}
+
+    subprocess.run(command, shell=True, env=env_dict)
+
+    logging.info(f'completed executing {command_str}')
