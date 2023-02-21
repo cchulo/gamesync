@@ -37,10 +37,11 @@ if __name__ == '__main__':
     DEBUG = os.getenv('GAMESYNC_DEBUG')
     log_file = None
     if DEBUG == 'true':
-        log_file = '~/.local/share/gamesync/log.log'
+        log_file = f'{os.path.expanduser("~")}/.local/share/gamesync/log.log'
 
     logging.basicConfig(
         filename=log_file,
+        filemode='a',
         format='%(asctime)s | %(levelname)s | %(message)s',
         level=logging.NOTSET,
         datefmt='%Y-%m-%d %H:%M:%S')
