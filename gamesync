@@ -30,7 +30,8 @@ def wrap_process():
 
     logging.info(f'executing: {command_str}')
 
-    subprocess.run(cmd_vars, shell=True, env=env_dict)
+    process = subprocess.Popen(cmd_vars, shell=True, env=env_dict, start_new_session=True)
+    process.wait()
 
     logging.info(f'completed executing {command_str}')
 
